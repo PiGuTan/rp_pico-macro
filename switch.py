@@ -28,7 +28,7 @@ except KeyError as e:
 abort = False # TODO: make this controllable
 
 class Switch:
-    def __init__(self,button_no:int,led_no:int=-1):
+    def __init__(self,button_no:int):
         self.button_no: int = button_no
         self.pin = pin_map[button_no]
         self.sequence:list[int] = config_data[button_no]["sequence"]
@@ -38,15 +38,22 @@ class Switch:
         self.button = digitalio.DigitalInOut(self.pin)
         self.button.direction = digitalio.Direction.INPUT
         self.button.pull = digitalio.Pull.UP
-        
-
-        self.led = None # TODO: create for led
+        if "led" in config_data[button_no]:
+            self.led_no:int = config_data[button_no]["led"]
+            self.led_pin = pin_map[self.led_no]
+            self.led = digitalio.DigitalInOut(self.led_pin)
+            self.led.direction = digitalio.Direction.OUTPUT
+        else:
+            self.led = None
+            self.led_pin = None
+            self.led_no = -1
         
     async def action(self) -> bool:
         if self.running:
             return False
         print("s",self.button_no, sep="", end=" ")
-        # TODO: led on
+        if self.led:
+            self.led.value = True
         for sequence in self.sequence:
             self.running = True
             if abort:
@@ -58,7 +65,8 @@ class Switch:
                 mouse.click(action_map[split[0]][split[1]])
             await asyncio.sleep(self.delay)
         print("e",self.button_no, sep="", end=" ")
-        # TODO: led_off
+        if self.led:
+            self.led.value = False
         self.running = False
         return not abort
 

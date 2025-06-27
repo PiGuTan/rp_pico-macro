@@ -23,5 +23,7 @@ async def main():
             
         await asyncio.sleep(0.01) # Small delay to reduce CPU usage
 
-asyncio.run(main())
-
+try:
+    asyncio.run(main())
+except KeyboardInterupt:
+    pass
