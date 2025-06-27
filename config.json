@@ -1,0 +1,14 @@
+{
+    12: {
+        "sequence":["Keycode.LEFT_ARROW","Keycode.RIGHT_ARROW"],
+        "delay": 10
+    },
+    11: {
+        "sequence":["Keycode.LEFT_BRACKET"],
+        "delay": 20
+    },
+    10: {
+        "sequence":["Mouse.LEFT_BUTTON","Keycode.ENTER","Keycode.ENTER","Keycode.ENTER","Keycode.ENTER"],
+        "delay": 50
+    }
+}
