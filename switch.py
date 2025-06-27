@@ -32,7 +32,7 @@ class Switch:
         self.button_no: int = button_no
         self.pin = pin_map[button_no]
         self.sequence:list[int] = config_data[button_no]["sequence"]
-        self.delay:float = config_data[button_no]["delay"]/10
+        self.delay:float = config_data[button_no]["delay"]/1000
         self.running = False
 
         self.button = digitalio.DigitalInOut(self.pin)
