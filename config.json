@@ -1,4 +1,8 @@
 {
+    18: {
+        "action": "abort",
+        "delay": 10
+    },
     12: {
         "sequence":["Keycode.LEFT_ARROW","Keycode.RIGHT_ARROW"],
         "delay": 10
@@ -8,7 +12,8 @@
         "delay": 20
     },
     10: {
-        "sequence":["Mouse.LEFT_BUTTON","Keycode.ENTER","Keycode.ENTER","Keycode.ENTER","Keycode.ENTER"],
-        "delay": 50
+        "sequence":["Keycode.ESCAPE","Keycode.ENTER","Keycode.LEFT_ARROW","Keycode.ENTER"],
+        "delay": 100,
+        "led":9
     }
 }

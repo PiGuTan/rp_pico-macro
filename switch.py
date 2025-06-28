@@ -3,6 +3,7 @@ import asyncio
 import json
 import usb_hid
 import digitalio
+
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.mouse import Mouse
@@ -25,19 +26,31 @@ except OSError as e:
 except KeyError as e:
     print("Missing key in JSON data:", e)
 
-abort = False # TODO: make this controllable
-
 class Switch:
+    abort_button = None
     def __init__(self,button_no:int):
         self.button_no: int = button_no
         self.pin = pin_map[button_no]
-        self.sequence:list[int] = config_data[button_no]["sequence"]
-        self.delay:float = config_data[button_no]["delay"]/1000
-        self.running = False
-
+        
+        self.delay:int = 1000
+        if "delay" in config_data[button_no]:
+            self.delay = config_data[button_no]["delay"]
+        
         self.button = digitalio.DigitalInOut(self.pin)
         self.button.direction = digitalio.Direction.INPUT
         self.button.pull = digitalio.Pull.UP
+        self.running = False
+        
+    async def action(self) -> bool:
+        print("n",self.button_no, sep="", end=" ")
+        pass
+
+class Action_switch(Switch):
+    def __init__(self,button_no:int):
+        super().__init__(button_no)
+        self.sequence:list[int] = config_data[button_no]["sequence"]
+        
+        # led config
         if "led" in config_data[button_no]:
             self.led_no:int = config_data[button_no]["led"]
             self.led_pin = pin_map[self.led_no]
@@ -47,15 +60,18 @@ class Switch:
             self.led = None
             self.led_pin = None
             self.led_no = -1
-        
+    
     async def action(self) -> bool:
         if self.running:
             return False
         print("s",self.button_no, sep="", end=" ")
         if self.led:
             self.led.value = True
+        self.running=True
+        
         for sequence in self.sequence:
-            self.running = True
+            abort = not Switch.abort_button.value
+            print(abort)
             if abort:
                 break
             split = sequence.split(".")
@@ -63,18 +79,35 @@ class Switch:
                 keyboard.send(action_map[split[0]][split[1]])
             elif split[0] == "Mouse":
                 mouse.click(action_map[split[0]][split[1]])
-            await asyncio.sleep(self.delay)
-        print("e",self.button_no, sep="", end=" ")
-        if self.led:
-            self.led.value = False
+            if self.led:
+                self.led.value = True
+            await asyncio.sleep_ms(self.delay)
+            if self.led:
+                self.led.value = False
         self.running = False
+
+        print("a" if abort else "e",self.button_no, sep="", end=" ")
         return not abort
 
-
+class Value_switch(Switch):
+    """
+    switch that detects values
+    
+    """
+    def __init__(self,button_no:int):
+        super().__init__(button_no)
+        self.action_config:str = config_data[button_no]["action"]
+        if self.action_config == "abort":
+            Switch.abort_button = self.button
+        
+        
 switches: Switch = []
 for pin_key in config_data.keys():
-    switches.append(Switch(pin_key))
-
+    if "action" in config_data[pin_key]:
+        Value_switch(pin_key)
+    else:
+        switches.append(Action_switch(pin_key))
+print(switches)
 
     
     
