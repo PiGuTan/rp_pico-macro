@@ -3,6 +3,7 @@ import asyncio
 import json
 import usb_hid
 import digitalio
+import os
 
 from adafruit_hid.keycode import Keycode
 from adafruit_hid.keyboard import Keyboard
@@ -71,14 +72,19 @@ class Action_switch(Switch):
         
         for sequence in self.sequence:
             abort = not Switch.abort_button.value
-            print(abort)
             if abort:
                 break
             split = sequence.split(".")
-            if split[0] == "Keycode":
-                keyboard.send(action_map[split[0]][split[1]])
-            elif split[0] == "Mouse":
-                mouse.click(action_map[split[0]][split[1]])
+            if debug:
+                try:
+                    print(action_map[split[0]][split[1]],end=" ")
+                except KeyError:
+                    print("?",split,sep="")
+            else:
+                if split[0] == "Keycode":
+                    keyboard.send(action_map[split[0]][split[1]])
+                elif split[0] == "Mouse":
+                    mouse.click(action_map[split[0]][split[1]])
             if self.led:
                 self.led.value = True
             await asyncio.sleep_ms(self.delay)
@@ -100,14 +106,22 @@ class Value_switch(Switch):
         if self.action_config == "abort":
             Switch.abort_button = self.button
         
-        
+debug:bool = bool(os.getenv("DEBUG"))
 switches: Switch = []
 for pin_key in config_data.keys():
     if "action" in config_data[pin_key]:
-        Value_switch(pin_key)
+        try:
+            Value_switch(pin_key)
+            print("Successfully configured pin -", pin_key)
+        except Exception as e:
+            print("Failed to config pin -", pin_key, "-", e)
     else:
-        switches.append(Action_switch(pin_key))
-print(switches)
+        try:
+            switches.append(Action_switch(pin_key))
+            print("Successfully configured pin -", pin_key)
+        except Exception as e:
+            print("Failed to config pin -", pin_key, "-", e)
+
 
     
     
