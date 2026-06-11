@@ -1,19 +1,28 @@
 {
-    18: {
+    16: {
         "action": "abort",
         "delay": 10
     },
-    12: {
-        "sequence":["Keycode.LEFT_ARROW","Keycode.RIGHT_ARROW"],
-        "delay": 10
+    0: {
+        "sequence":["Keycode.X"],
+        "delay": 100,
+        "led":27
     },
-    11: {
-        "sequence":["Keycode.LEFT_BRACKET"],
-        "delay": 20
+    3: {
+        "sequence":["Keycode.G"],
+        "delay": 100,
+        "led":28
     },
     10: {
-        "sequence":["Keycode.ESCAPE","Keycode.ENTER","Keycode.LEFT_ARROW","Keycode.ENTER"],
-        "delay": 100,
-        "led":9
+        "sequence":["Keycode.LEFT_ARROW","Keycode.RIGHT_ARROW"],
+        "delay": 50
+    },
+    13: {
+        "sequence":["Keycode.SPACEBAR"],
+        "delay": 50
+    },
+    15: {
+        "sequence":["Mouse.RIGHT_BUTTON"],
+        "delay": 50
     }
 }

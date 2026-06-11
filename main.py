@@ -8,6 +8,8 @@ async def main():
                 # print(switch.action)
                 asyncio.create_task(switch.action())
                 await asyncio.sleep_ms(10)
+            if switch.abort:
+                continue
         await asyncio.sleep_ms(10) # Small delay to reduce CPU usage
 
 try:
