@@ -1,0 +1,7 @@
+toml-0.10.2.dist-info/METADATA,,
+toml/__init__.py,,
+toml/decoder.py,,
+toml/encoder.py,,
+toml/ordered.py,,
+toml/tz.py,,
+toml-0.10.2.dist-info/RECORD,,
