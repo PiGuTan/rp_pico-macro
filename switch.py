@@ -41,7 +41,6 @@ class Switch:
         self.button.direction = digitalio.Direction.INPUT
         self.button.pull = digitalio.Pull.UP
         self.running = False
-        self.abort = False
         
     async def action(self) -> bool:
         print("n",self.button_no, sep="", end=" ")
@@ -106,7 +105,6 @@ class Value_switch(Switch):
         self.action_config:str = config_data[button_no]["action"]
         if self.action_config == "abort":
             Switch.abort_button = self.button
-            self.abort = True
         
 debug:bool = bool(os.getenv("DEBUG"))
 switches: Switch = []
